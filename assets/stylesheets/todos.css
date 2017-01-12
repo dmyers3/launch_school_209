@@ -1,6 +1,6 @@
 @import url("whitespace-reset.css");
 
-html, body {
+html, body, main {
   height: 100%;
 }
 
@@ -91,6 +91,7 @@ nav li {
 
 main {
   padding: 22px 100px 0 20px;
+  position: relative;
 }
 
 header img {
@@ -171,7 +172,8 @@ main li img {
 
 .modal {
   display: none;
-  padding: 38px 40px 40px 30px;
+  padding: 38px 0 0 30px;
+  /*40px 40px*/
 }
 
 .modal textarea, .modal input, .modal select {
@@ -205,7 +207,6 @@ main li img {
 .modal input {
   height: 36px;
   width: 396px;
-  padding-top: 10px;
 }
 
 .modal span {
@@ -238,6 +239,7 @@ main li img {
   background: #148fd5;
   border: none;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 #modal {
@@ -285,4 +287,18 @@ main li img {
   #menu_toggle:checked + nav {
     display: block;
   }
+}
+
+.show_modal ~ .modal {
+  display: block;
+  position: absolute;
+  top: 106px;
+  left: 106px;
+  background-color: rgba(255, 255, 255, 1);
+  width: 575px;
+  height: 400px;
+  /*padding-bottom: 0;*/
+  /*padding-right: 0;*/
+  z-index: 10; /* keep on top of other elements on the page */
+  outline: 9999px solid rgba(0,0,0,0.2);
 }

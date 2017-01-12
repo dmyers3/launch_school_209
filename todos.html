@@ -6,135 +6,130 @@
     <link rel="stylesheet" href="assets/stylesheets/todos.css" />
   </head>
   <body>
-   <input id="menu_toggle" type="checkbox">
-   <nav>
-     <h2 class="all_todos">All Todos <span class="count">18</span></h2>
-     <ul>
-       <li class="active">02/16 <span class="count">8</span></li>
-       <li>03/16 <span class="count">2</span></li>
-       <li>04/16 <span class="count">1</span></li>
-       <li>05/16 <span class="count">1</span></li>
-       <li>06/16 <span class="count">6</span></li>
-     </ul>
-     <h2 class="completed">Completed</h2>
-     <ul>
-       <li class="completed">02/15</li>
-       <li class="completed">03/15</li>
-       <li class="completed">04/15</li>
-       <li class="completed">05/15</li>
-       <li class="completed">06/14</li>
-     </ul>
-   </nav>
-   <main>
-     <header>
-       <label for="menu_toggle">
-         <img src="assets/images/icon_menu.png" alt="menu"/>
-       </label>
-       <h1>02/16 <span class="count">8</span></h1>
-     </header>
-     <h3>Add new to do</h3>
-     <ul>
-       <label for="modal">
-         <li>Item 1 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-         <input type="checkbox" name="modal" id="modal" />
-         <div class="modal">
-           <form action="" method="post">
-           <fieldset>
-             <dl>
-               <div>
-                 <dt><label for="title">Title</label></dt>
-                 <dd><input type="text" name="title" id="title" /></dd>
-               </div>
-               <div>
-                 <dt><label for="day">Due Date</label></dt>
-                 <dd>
-                   <select name="day" id="day">
-                    <option disabled="disabled" selected="selected">Day</option>
-                    <option>1</option>       
-                    <option>2</option>       
-                    <option>3</option>       
-                    <option>4</option>       
-                    <option>5</option>       
-                    <option>6</option>       
-                    <option>7</option>       
-                    <option>8</option>       
-                    <option>9</option>       
-                    <option>10</option>       
-                    <option>11</option>       
-                    <option>12</option>       
-                    <option>13</option>       
-                    <option>14</option>       
-                    <option>15</option>       
-                    <option>16</option>       
-                    <option>17</option>       
-                    <option>18</option>       
-                    <option>19</option>       
-                    <option>20</option>       
-                    <option>21</option>       
-                    <option>22</option>       
-                    <option>23</option>       
-                    <option>24</option>       
-                    <option>25</option>       
-                    <option>26</option>       
-                    <option>27</option>       
-                    <option>28</option>       
-                    <option>29</option>       
-                    <option>30</option>       
-                    <option>31</option>      
-                   </select>
-                 </dd><span> / </span>
-                 <dd>
-                   <select name="month" id="month">
-                    <option disabled="disabled" selected="selected">Month</option>
-                    <option>January</option>       
-                    <option>February</option>       
-                    <option>March</option>       
-                    <option>April</option>       
-                    <option>May</option>       
-                    <option>June</option>       
-                    <option>July</option>       
-                    <option>August</option>       
-                    <option>September</option>       
-                    <option>October</option>       
-                    <option>November</option>       
-                    <option>December</option>           
-                   </select>
+    <input id="menu_toggle" type="checkbox">
+    <nav>
+      <h2 class="all_todos">All Todos <span class="count">18</span></h2>
+      <ul>
+        <li class="active">02/16 <span class="count">8</span></li>
+        <li>03/16 <span class="count">2</span></li>
+        <li>04/16 <span class="count">1</span></li>
+        <li>05/16 <span class="count">1</span></li>
+        <li>06/16 <span class="count">6</span></li>
+      </ul>
+      <h2 class="completed">Completed</h2>
+      <ul>
+        <li class="completed">02/15</li>
+        <li class="completed">03/15</li>
+        <li class="completed">04/15</li>
+        <li class="completed">05/15</li>
+        <li class="completed">06/14</li>
+      </ul>
+    </nav>
+    <main>
+      <header>
+        <label for="menu_toggle">
+          <img src="assets/images/icon_menu.png" alt="menu"/>
+        </label>
+        <h1>02/16 <span class="count">8</span></h1>
+      </header>
+      <h3>Add new to do</h3>
+      <ul>
+        <li class="show_modal">Item 1 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
+        <li>Item 2 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
+        <li class="completed">Item 3 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
+        <li class="completed">Item 4 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
+        <li class="completed">Item 5 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
+        <li>Item 6 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
+        <li>Item 7 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
+        <li>Item 8 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
+        <li>Item 9 <img src="assets/images/icon_trash.png" alt="trash"/></li>
+        <div class="modal">
+          <form action="" method="post">
+            <fieldset>
+              <dl>
+                <div>
+                  <dt><label for="title">Title</label></dt>
+                  <dd><input type="text" name="title" id="title" /></dd>
+                </div>
+                <div>
+                  <dt><label for="day">Due Date</label></dt>
+                  <dd>
+                    <select name="day" id="day">
+                      <option disabled="disabled" selected="selected">Day</option>
+                      <option>1</option>       
+                      <option>2</option>       
+                      <option>3</option>       
+                      <option>4</option>       
+                      <option>5</option>       
+                      <option>6</option>       
+                      <option>7</option>       
+                      <option>8</option>       
+                      <option>9</option>       
+                      <option>10</option>       
+                      <option>11</option>       
+                      <option>12</option>       
+                      <option>13</option>       
+                      <option>14</option>       
+                      <option>15</option>       
+                      <option>16</option>       
+                      <option>17</option>       
+                      <option>18</option>       
+                      <option>19</option>       
+                      <option>20</option>       
+                      <option>21</option>       
+                      <option>22</option>       
+                      <option>23</option>       
+                      <option>24</option>       
+                      <option>25</option>       
+                      <option>26</option>       
+                      <option>27</option>       
+                      <option>28</option>       
+                      <option>29</option>       
+                      <option>30</option>       
+                      <option>31</option>      
+                    </select>
                   </dd><span> / </span>
-                 <dd>
-                   <select name="year" id="year">
-                    <option disabled="disabled" selected="selected">Year</option>
-                    <option>2014</option>       
-                    <option>2015</option>       
-                    <option>2016</option>       
-                    <option>2017</option>       
-                    <option>2018</option>       
-                    <option>2019</option>       
-                    <option>2020</option>
-                   </select>
-                 </dd>
-               </div>
-               <div>
-             <dt><label for="description">Description</label></dt>
-             <dd><textarea name="description" id="description" placeholder="Description"></textarea></dd>
-           </div>
-         </dl>
-         <button type="submit">Save</button>
-         <button type="button">Mark as Complete</button>
-       </fieldset>
-       </form>
-     </div>
-       </label>
-       <li>Item 2 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-       <li class="completed">Item 3 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-       <li class="completed">Item 4 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-       <li class="completed">Item 5 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-       <li>Item 6 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-       <li>Item 7 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-       <li>Item 8 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-       <li>Item 9 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-     </ul>
-     
-     
+                  <dd>
+                    <select name="month" id="month">
+                      <option disabled="disabled" selected="selected">Month</option>
+                      <option>January</option>       
+                      <option>February</option>       
+                      <option>March</option>       
+                      <option>April</option>       
+                      <option>May</option>       
+                      <option>June</option>       
+                      <option>July</option>       
+                      <option>August</option>       
+                      <option>September</option>       
+                      <option>October</option>       
+                      <option>November</option>       
+                      <option>December</option>           
+                    </select>
+                  </dd><span> / </span>
+                  <dd>
+                    <select name="year" id="year">
+                      <option disabled="disabled" selected="selected">Year</option>
+                      <option>2014</option>       
+                      <option>2015</option>       
+                      <option>2016</option>       
+                      <option>2017</option>       
+                      <option>2018</option>       
+                      <option>2019</option>       
+                      <option>2020</option>
+                    </select>
+                  </dd>
+                </div>
+                <div>
+                  <dt><label for="description">Description</label></dt>
+                  <dd><textarea name="description" id="description" placeholder="Description"></textarea></dd>
+                </div>
+              </dl>
+              <button type="submit">Save</button>
+              <button type="button">Mark as Complete</button>
+            </fieldset>
+          </form>
+        </div>
+      </ul>
    </main>
   </body>
 </html> 
