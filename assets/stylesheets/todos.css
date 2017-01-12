@@ -1,0 +1,288 @@
+@import url("whitespace-reset.css");
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font: normal 16px Helvetica, Arial, sans-serif;
+  color: #060606;
+}
+
+nav {
+  width: 335px;
+  background: #464f77;
+  float: left;
+  height: 100%
+}
+
+main {
+  overflow: hidden;
+}
+
+nav {
+  color: rgba(255, 255, 255, .5);
+  padding: 70px 0 0 0;
+}
+
+nav h2, nav .active {
+  color: #ffffff;
+}
+
+nav h2 {
+  font-size: 18px;
+  font-weight: normal;
+  padding: 0 30px 22px 100px;
+}
+
+nav h2:before {
+  content: "";
+  width: 26px;
+  height: 26px;
+  display: inline-block;
+  vertical-align: middle;
+  padding-right: 10px;
+  margin-left: -36px
+}
+
+nav h2.count {
+  color: rgba(255, 255, 255, .7);
+}
+
+nav .all_todos:before {
+  background: transparent url("../images/icon_list.png") 0 0 no-repeat;
+}
+
+nav .completed:before {
+  background: transparent url("../images/icon_check.png") 0 0 no-repeat;
+}
+
+li.completed {
+  text-decoration: line-through;
+}
+
+.count {
+  float: right;
+  border-radius: 50%;
+  padding: 2px 5px;
+  background-color: #6b7292; 
+  font-size: 14px;
+  vertical-align: middle;
+  color: rgba(255, 255, 255, .6);
+}
+
+nav ul {
+  margin-bottom: 54px;
+}
+
+nav li {
+  padding: 13px 30px 13px 100px;
+}
+
+/*nav li.*/
+.active {
+  background-color: #383f5f;
+}
+
+/*nav li.*/
+.active .count {
+  background-color: #148fd5;
+}
+
+main {
+  padding: 22px 100px 0 20px;
+}
+
+header img {
+  padding-left: 12px;
+  visibility: hidden 
+}
+
+#menu_toggle {
+  display: none;
+}
+
+h1 {
+  font-size: 21px;
+  font-weight: normal;
+  width: 94px;
+  padding: 28px 0 44px 12px;
+}
+
+/*styles specific to h1 .count. see earlier .count styles for more*/
+h1 .count {
+  background-color: #148fd5;
+  color: #ffffff;
+  position: relative;
+  top: 2px;
+}
+
+h3:before {
+  content: "";
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  background: transparent url("../images/icon_plus.png") 0 0 no-repeat;
+  margin-right: 14px;
+  
+}
+
+h3 {
+  clear:both;
+  font-size: 16px;
+  color: #148fd5;
+  font-weight: normal;
+  padding: 0 0 17px 12px;
+}
+
+h3, main li {
+  cursor: pointer;
+}
+
+main li:before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background: transparent url("../images/icon_mini_unchecked.png") 0 0 no-repeat;
+  margin-right: 14px;
+}
+
+main li.completed:before {
+  background: transparent url("../images/icon_mini_check.png") 0 0 no-repeat;
+}
+
+main li {
+  padding: 17px 0 17px 12px;
+  border-top: 1px solid #e7e7e7;
+}
+
+main li.completed {
+  color: #b3b3b3;
+}
+
+main li:hover {
+  color: #148fd5;
+}
+
+main li img {
+  float: right;
+}
+
+.modal {
+  display: none;
+  padding: 38px 40px 40px 30px;
+}
+
+.modal textarea, .modal input, .modal select {
+  font: normal 16px Helvetica, Arial, sans-serif;
+  padding: 2px 0 0 10px;
+  box-sizing: border-box;
+  border: 1px solid #757575;
+}
+
+.modal div {
+  margin-bottom: 25px;
+}
+
+.modal form {
+  color: #060606;
+}
+
+.modal textarea {
+  resize: none;
+  height: 144px;
+  width: 396px;
+  padding-top: 10px;
+}
+
+
+.modal select {
+  height: 36px;
+  width: 116px;
+}
+
+.modal input {
+  height: 36px;
+  width: 396px;
+  padding-top: 10px;
+}
+
+.modal span {
+  padding: 0 5px;
+}
+
+.modal dt, .modal dd {
+  display: inline-block;
+}
+
+.modal dt {
+  padding-top: 10px;
+  width: 110px;
+  vertical-align: top;
+}
+
+.modal dd {
+  vertical-align: middle;
+}
+
+.modal button[type="submit"] {
+  margin: 0 16px 0 114px;
+}
+
+.modal button {
+  font: normal 16px Helvetica, Arial, sans-serif;
+  width: 185px;
+  padding: 10px 0;
+  color: #ffffff;
+  background: #148fd5;
+  border: none;
+  border-radius: 5px;
+}
+
+#modal {
+  display: none;
+}
+
+/*#modal:checked + .modal:before {*/
+/*  position: fixed;*/
+/*  z-index: 1;*/
+/*  top: 0;*/
+/*  left: 0;*/
+/*  right: 0;*/
+/*  bottom: 0;*/
+/*  background: rgba(0, 0, 0, .4);*/
+/*  content: "";*/
+/*}*/
+
+#modal:checked + .modal {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: rgba(255, 255, 255, 1);
+  /*z-index: 2;*/
+  /*width: 600px;*/
+  /*height: 600px;*/
+  /*box-sizing: border-box;*/
+  /*margin-left: -300px;*/
+  
+  z-index: 10; /* keep on top of other elements on the page */
+  outline: 9999px solid rgba(0,0,0,0.5);
+}
+  
+
+@media (max-width: 768px) {
+  header img {
+    visibility: visible;
+    cursor: pointer;
+  }
+  
+  nav {
+    display: none;
+  }
+  
+  #menu_toggle:checked + nav {
+    display: block;
+  }
+}
