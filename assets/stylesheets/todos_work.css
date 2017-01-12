@@ -1,6 +1,6 @@
 @import url("whitespace-reset.css");
 
-html, body, main {
+html, body, main, nav {
   height: 100%;
 }
 
@@ -13,17 +13,14 @@ nav {
   width: 335px;
   background: #464f77;
   float: left;
-  height: 100%
+  color: rgba(255, 255, 255, .5);
+  padding: 70px 0 0 0;
 }
 
 main {
   overflow: hidden;
 }
 
-nav {
-  color: rgba(255, 255, 255, .5);
-  padding: 70px 0 0 0;
-}
 
 nav h2, nav .active {
   color: #ffffff;
@@ -99,7 +96,7 @@ header img {
   visibility: hidden 
 }
 
-#menu_toggle {
+#menu_toggle, #modal_toggle {
   display: none;
 }
 
@@ -136,7 +133,7 @@ h3 {
   padding: 0 0 17px 12px;
 }
 
-h3, main li {
+h3, main li, .modal_lable {
   cursor: pointer;
 }
 
@@ -243,36 +240,33 @@ main li img {
   cursor: pointer;
 }
 
-#modal {
-  display: none;
-}
-
-/*#modal:checked + .modal:before {*/
-/*  position: fixed;*/
-/*  z-index: 1;*/
-/*  top: 0;*/
-/*  left: 0;*/
-/*  right: 0;*/
-/*  bottom: 0;*/
-/*  background: rgba(0, 0, 0, .4);*/
-/*  content: "";*/
-/*}*/
-
-#modal:checked + .modal {
+.show_modal ~ .modal, #modal_toggle:checked ~ .modal {
   display: block;
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 106px;
+  left: 106px;
   background-color: rgba(255, 255, 255, 1);
-  /*z-index: 2;*/
-  /*width: 600px;*/
-  /*height: 600px;*/
-  /*box-sizing: border-box;*/
-  /*margin-left: -300px;*/
+  width: 575px;
+  height: 400px;
   z-index: 10; /* keep on top of other elements on the page */
-  outline: 9999px solid rgba(0,0,0,0.5);
+  outline: 9999px solid rgba(0,0,0,0.2);
 }
-  
+
+#modal_toggle:checked + ul .modal_lable:before {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  content: "";
+  z-index: 1;
+}
+
+.modal_lable {
+  margin-left: -5px; /*label was making <li> offset a little to the right */
+  display: inline-block;
+  width: 80%; /* makes more of <li> clickable to pop up modal */
+}
 
 @media (max-width: 768px) {
   header img {
@@ -288,49 +282,3 @@ main li img {
     display: block;
   }
 }
-
-.show_modal ~ .modal {
-  display: block;
-  position: absolute;
-  top: 106px;
-  left: 106px;
-  background-color: rgba(255, 255, 255, 1);
-  width: 575px;
-  height: 400px;
-  /*padding-bottom: 0;*/
-  /*padding-right: 0;*/
-  z-index: 10; /* keep on top of other elements on the page */
-  outline: 9999px solid rgba(0,0,0,0.2);
-}
-
-#super_modal {
-  display: none;
-}
-
-#super_modal:checked ~ .modal {
-  display: block;
-  position: absolute;
-  top: 106px;
-  left: 106px;
-  background-color: rgba(255, 255, 255, 1);
-  width: 575px;
-  height: 400px;
-  /*padding-bottom: 0;*/
-  /*padding-right: 0;*/
-  z-index: 10; /* keep on top of other elements on the page */
-  outline: 9999px solid rgba(0,0,0,0.2);
-}
-
-#super_modal:checked + ul .modal_lable:before {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  content: "";
-  z-index: 1;
-}
-
-/*.modal_lable {*/
-/*  display: inline-block;*/
-/*}*/

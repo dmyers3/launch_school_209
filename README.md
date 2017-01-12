@@ -4,7 +4,6 @@ ______________
 
 - add class "show_modal" to any <li> item in the <main> content area
 
-- I didn't add the "checkbox hack" to show modal as well. Was a bit confused
-  by this since the description video said it wasn't necessary but it was
-  mentioned in the notes below the video. If this is something that needs to be
-  added let me know.
+- I added the "checkbox hack" to Item 1 to also show the modal. Was a
+  bit confused since the description video said it wasn't necessary, but it was
+  mentioned in the notes below the video, so I just added it to be safe.
