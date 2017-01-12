@@ -209,7 +209,8 @@ main li img {
   width: 396px;
 }
 
-.modal span {
+.modal .slash {
+  display: inline-block;
   padding: 0 5px;
 }
 
@@ -320,7 +321,7 @@ main li img {
   outline: 9999px solid rgba(0,0,0,0.2);
 }
 
-#super_modal:checked + .modal_lable:before {
+#super_modal:checked + ul .modal_lable:before {
   position: fixed;
   top: 0;
   right: 0;
@@ -329,3 +330,7 @@ main li img {
   content: "";
   z-index: 1;
 }
+
+/*.modal_lable {*/
+/*  display: inline-block;*/
+/*}*/
