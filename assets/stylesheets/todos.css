@@ -244,7 +244,7 @@ main li img {
   cursor: pointer;
 }
 
-.show_modal ~ .modal, #modal_toggle:checked ~ .modal {
+.show_modal + .modal, #modal_toggle:checked ~ .modal {
   display: block;
   position: absolute;
   top: 106px;
