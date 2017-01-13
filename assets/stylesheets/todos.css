@@ -19,10 +19,6 @@ nav {
   padding: 70px 0 0 0;
 }
 
-main {
-  overflow: hidden;
-}
-
 nav h2, nav .active {
   color: #ffffff;
 }
@@ -87,10 +83,13 @@ nav .active .count {
 main {
   padding: 22px 100px 0 20px;
   position: relative;
+  overflow: hidden;
 }
 
 header img {
   padding-left: 12px;
+  width: 26px;
+  height: auto;
   visibility: hidden 
 }
 
@@ -285,4 +284,51 @@ main li img {
   #menu_toggle:checked + nav {
     display: block;
   }
+  
+  .show_modal + .modal, #modal_toggle:checked ~ .modal {
+    display: block;
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    background-color: rgba(255, 255, 255, 1);
+    width: 575px;
+    height: 400px;
+    z-index: 10; /* keep on top of other elements on the page */
+    outline: 9999px solid rgba(0,0,0,0.2);
+  }
+
+}
+
+@media (max-width: 540px) {
+  header img {
+    visibility: visible;
+    cursor: pointer;
+  }
+  
+  nav {
+    display: none;
+  }
+  
+  #menu_toggle:checked + nav {
+    display: block;
+    width: 235px;
+    
+  }
+  
+  nav h2 {
+    padding: 0 15px 11px 15px;
+  }
+  
+  nav li {
+    padding: 12px 15px 12px 51px;
+  }
+  
+  #menu_toggle:checked ~ main header img {
+    position: fixed;
+    top: 15px;
+    left: 26px;
+    background: #ffffff;
+    padding: 5px;
+  }
+  
 }
