@@ -33,18 +33,22 @@
         <h1>02/16 <span class="count">8</span></h1>
       </header>
       <h3>Add new to do</h3>
+      <input type="checkbox" id="modal_toggle" name="modal_check" />
       <ul>
-        <li class="show_modal">Item 1 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-        <li>Item 2 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-        <li class="completed">Item 3 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-        <li class="completed">Item 4 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-        <li class="completed">Item 5 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-        <li>Item 6 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-        <li>Item 7 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
-        <li>Item 8 <a href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a></li>
+        <li>
+          <label class="modal_lable" for="modal_toggle">Item 1</label><img src="assets/images/icon_trash.png" alt="trash"/>
+        </li>
+        <li>Item 2 <img src="assets/images/icon_trash.png" alt="trash"/></li>
+        <li class="completed">Item 3 <img src="assets/images/icon_trash.png" alt="trash"/></li>
+        <li class="completed">Item 4 <img src="assets/images/icon_trash.png" alt="trash"/></li>
+        <li class="completed">Item 5 <img src="assets/images/icon_trash.png" alt="trash"/></li>
+        <li>Item 6 <img src="assets/images/icon_trash.png" alt="trash"/></li>
+        <li>Item 7 <img src="assets/images/icon_trash.png" alt="trash"/></li>
+        <li>Item 8 <img src="assets/images/icon_trash.png" alt="trash"/></li>
         <li>Item 9 <img src="assets/images/icon_trash.png" alt="trash"/></li>
-        <div class="modal">
-          <form action="" method="post">
+      </ul>
+      <div class="modal">
+          <form action="#" method="post">
             <fieldset>
               <dl>
                 <div>
@@ -54,8 +58,8 @@
                 <div>
                   <dt><label for="day">Due Date</label></dt>
                   <dd>
-                    <select name="day" id="day">
-                      <option disabled="disabled" selected="selected">Day</option>
+                    <select name="day" id="day" required>
+                      <option value="" disabled="disabled" selected="selected">Day</option>
                       <option>1</option>       
                       <option>2</option>       
                       <option>3</option>       
@@ -88,10 +92,11 @@
                       <option>30</option>       
                       <option>31</option>      
                     </select>
-                  </dd><span> / </span>
+                    <span class="slash"> / </span>
+                  </dd>
                   <dd>
-                    <select name="month" id="month">
-                      <option disabled="disabled" selected="selected">Month</option>
+                    <select name="month" id="month" required>
+                      <option value="" disabled="disabled" selected="selected">Month</option>
                       <option>January</option>       
                       <option>February</option>       
                       <option>March</option>       
@@ -105,10 +110,11 @@
                       <option>November</option>       
                       <option>December</option>           
                     </select>
-                  </dd><span> / </span>
+                    <span class="slash"> / </span>
+                  </dd>
                   <dd>
-                    <select name="year" id="year">
-                      <option disabled="disabled" selected="selected">Year</option>
+                    <select name="year" id="year" required>
+                      <option value="" disabled="disabled" selected="selected">Year</option>
                       <option>2014</option>       
                       <option>2015</option>       
                       <option>2016</option>       
@@ -129,7 +135,6 @@
             </fieldset>
           </form>
         </div>
-      </ul>
    </main>
   </body>
 </html> 
