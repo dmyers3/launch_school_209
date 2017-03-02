@@ -50,9 +50,6 @@ nav .completed:before {
   background: transparent url("../images/icon_check.png") 0 0 no-repeat;
 }
 
-li.completed {
-  text-decoration: line-through;
-}
 
 .count {
   float: right;
@@ -70,6 +67,7 @@ nav ul {
 
 nav li {
   padding: 12px 30px 12px 136px;
+  cursor: pointer;
 }
 
 nav .active {
@@ -101,7 +99,7 @@ header img {
 h1 {
   font-size: 21px;
   font-weight: normal;
-  width: 110px;
+  width: 125px;
   padding: 28px 0 39px 12px;
 }
 
@@ -142,9 +140,6 @@ main li {
   border-top: 1px solid #e7e7e7;
 }
 
-main li.completed:before {
-  background: transparent url("../images/icon_mini_check.png") 0 0 no-repeat;
-}
 
 main li:after {
   clear: both;
@@ -152,9 +147,6 @@ main li:after {
   display: block;
 }
 
-main li.completed {
-  color: #b3b3b3;
-}
 
 main li .todo_info:hover {
   color: #148fd5;
@@ -287,8 +279,19 @@ main li .todo_info:hover {
   background: transparent url("../images/icon_mini_unchecked.png") left center no-repeat;
 }
 
+main .completed {
+  background: transparent url("../images/icon_mini_check.png") left center no-repeat;
+  text-decoration: line-through;
+  color: #b3b3b3;
+  
+}
+
 .modal_label:hover {
   background-color: rgba(0, 100, 205,.2);
+}
+
+.count {
+  margin-left: 5px;
 }
 
 @media (max-width: 768px) {

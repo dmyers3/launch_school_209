@@ -47,11 +47,13 @@ $(function() {
     init: function(title, dueDay, dueMonth, dueYear, description, id) {
       this.title = title;
       this.dueDay = dueDay;
-      this.dueMonth = parseMonth(dueMonth);
-      this.dueYear = parseYear(dueYear);
+      this.dueMonth = dueMonth;
+      this.dueYear = dueYear;
       this.description = description;
-      this.completed = false;
+      this.completed = 'notCompleted';
       this.id = id;
+      this.numMonth = parseMonth(dueMonth);
+      this.yearAbbrev = parseYear(dueYear);
       return this;
     }
   };
@@ -64,7 +66,7 @@ $(function() {
   
   createDatedLists(todos);
   renderNav();
-  renderMain();
+  renderMain('All Todos', todos);
   
   function renderNav() {
     $('.all_todos + ul').html(listsTemplate({lists: todoListsByDate}))
@@ -73,10 +75,10 @@ $(function() {
     
   }
   
-  function renderMain() {
-    $('main h1 .title').text('All Todos' + ' ');
+  function renderMain(title, todos) {
+    $('main h1 .title').text(title + ' ');
     $('main h1 .count').text(todos.length);
-    $('main ul').html(todosTemplate({todos: todos}));
+    $('main ul').html(todosTemplate({todos: sortTodos(todos)}));
   }
   
   $('.add_new').on('click', function(e) {
@@ -99,7 +101,11 @@ $(function() {
       $('#year').val('');
       $('#description').val('');
     }
+    toggleModal();
     
+  }
+  
+  function toggleModal() {
     $('#modal_toggle').click();
   }
   
@@ -107,9 +113,9 @@ $(function() {
     e.preventDefault();
     var todoID = $(e.target).closest('li').attr('data-id');
     if (e.target.nodeName === 'SPAN') {
-      editTodo(todoID);
+      displayEditModal(todoID);
     } else if (e.target.nodeName === 'LABEL') {
-      if ($('.modal:visible')) {
+      if ($('.modal').is(':visible')) {
         $('#modal_toggle').click();
       } else {
         toggleTodoCompleted(todoID);
@@ -117,21 +123,72 @@ $(function() {
     } else if (e.target.nodeName === 'A' || e.target.nodeName === 'IMG') {
       deleteTodo(todoID);
     }
-    console.log(e.target.nodeName);
   });
   
   function filterCompletedTodos() {
     return todos.filter(function(todo) {
-      return todo.completed === true;
+      return todo.completed === 'completed';
     });
   }
   
-  function editTodo(todoID) {
-    
+  function displayEditModal(todoID) {
+    var todo = todos.filter(function(todo) {
+      return parseInt(todo.id) === parseInt(todoID);
+    })[0];
+    displayModal(todo);
+    addButtonEventListeners('edit', todoID);
   }
   
   function toggleTodoCompleted(todoID) {
-    
+    var todo = todos.filter(function(todo) {
+      return parseInt(todo.id) === parseInt(todoID);
+    })[0];
+    if (todo.completed === 'notCompleted') {
+      todo.completed = 'completed';
+    } else {
+      todo.completed = 'notCompleted';
+    }
+    setTodos(todos);
+    // var viewableTodos = currentTodos();
+    renderPage(currentHeader(), currentTodos());
+  }
+  
+  function currentHeader() {
+    return $('main .title').text();
+  }
+  
+  function currentTodos() {
+    var header = currentHeader().trim();
+    console.log(header);
+    if (header === 'All Todos') {
+      return todos;
+    } else if (header === 'Completed') {
+      return filterCompletedTodos();
+    } else {
+      if ($('all .active')) {
+        return getTodosFromDateList(todoListsByDate, header);
+      } else {
+        return getTodosFromDateList(completedTodoListsByDate, header);
+      }
+    }
+  }
+  
+  
+  function sortTodos(todos) {
+    return todos.sort(function(todo1, todo2) {
+      if (todo1.completed === 'notCompleted' && todo2.completed === 'completed') {
+        return -1;
+      } else if (todo1.completed === 'completed' && todo2.completed === 'notCompleted') {
+        return 1;
+      } else {
+        return parseInt(todo1.id) - parseInt(todo2.id);
+      }
+    })
+  }
+  
+  function renderPage(title, todos) {
+    renderNav();
+    renderMain(title, todos);
   }
   
   function deleteTodo(todoID) {
@@ -141,13 +198,7 @@ $(function() {
     });
     todos.splice(matchingTodoIndex, 1);
     setTodos(todos);
-    // updates todo lists - can refactor this later so that instead of recreating
-    // lists from scracth you can find and remove specific todo
-    completedTodos = filterCompletedTodos();
-    completedTodoListsByDate = createDatedLists(completedTodos);
-    todoListsByDate = createDatedLists(todos);
-    renderNav();
-    renderMain();
+    renderPage(currentHeader(), currentTodos());
   }
   
   // $('main ul').on('click', 'img', function(e) {
@@ -169,7 +220,7 @@ $(function() {
     // { date: '04/17', todos: [todo1, todo2, todo3], numTodos = this.todos.length; }
     
     todos.forEach(function(todo) {
-      var stringDate = todo.dueMonth + '/' + todo.dueYear;
+      var stringDate = parseMonth(todo.dueMonth) + '/' + parseYear(todo.dueYear);
       
       if (todoExistsInDatedList(stringDate, datedLists)) {
         var listIndex = datedLists.findIndex(function(list) {
@@ -206,25 +257,80 @@ $(function() {
     return year.slice(2);
   }
   
+  function getTodoByID(todoID) {
+    return todos.filter(function(todo) {
+      return parseInt(todo.id) === parseInt(todoID);
+    })[0];
+  }
   
+  $('nav ul').on('click', 'li', function(e) {
+    e.preventDefault();
+    $('nav .active').removeClass('active');
+    $(e.target).addClass('active');
+    var date = $(e.target).text().split(' ')[0];
+    
+    if ($(e.target).closest('ul').attr('class') === 'all') {
+      var datedTodos = getTodosFromDateList(todoListsByDate, date);
+    } else {
+      var datedTodos = getTodosFromDateList(completedTodoListsByDate, date);
+    }
+    
+    renderMain(date, datedTodos);
+  })
   
+  $('nav h2').on('click', function(e) {
+    e.preventDefault();
+    $('nav .active').removeClass('active');
+    $(e.target).addClass('active');
+    console.log($(e.target).text().trim());
+    console.log($(e.target).text().trim().length);
+    if ($(e.target).text().match('All Todos')) {
+      renderMain('All Todos', todos);
+    } else if ($(e.target).text().match('Completed')) {
+      renderMain('Completed ', completedTodos)
+    }
+  })
+  
+  function getTodosFromDateList(list, selectedDate) {
+    var chosenList = list.filter(function(listElement) {
+      return listElement.date.trim() === selectedDate.trim();
+    })[0] || {};
+    console.log(chosenList);
+    return chosenList.todos || [];
+  }
+  
+  function editTodo(input, todoID) {
+    var todo = getTodoByID(todoID);
+    todo.title = input[0].value;
+    todo.dueDay = input[1].value;
+    todo.dueMonth = input[2].value;
+    todo.dueYear = input[3].value;
+    todo.description = input[4].value;
+    todo.numMonth = parseMonth(todo.dueMonth);
+    todo.yearAbbrev = parseYear(todo.dueYear);
+    setTodos(todos);
+  }
  
   
-  function addButtonEventListeners(type) {
+  function addButtonEventListeners(type, todoID) {
     $('form').on('submit', function(e) {
       e.preventDefault();
       var input = $('form').serializeArray();
       if (type === 'new') {
         createNewTodo(input);
+      } else if (type === 'edit') {
+        editTodo(input, todoID);
       }
-      displayModal();
-      renderNav();
-      renderMain();
+      toggleModal();
+      renderPage('All Todos', todos);
     })
     $('#mark_complete').on('click', function(e) {
       e.preventDefault();
       if (type === 'new') {
         alert("Cannot mark item complete since it hasn't been created yet!")
+      } else {
+        toggleTodoCompleted(todoID);
+        toggleModal();
       }
     })
     // turn off button listeners if modal is clicked out of
@@ -253,6 +359,11 @@ $(function() {
   
   function setTodos(todos) {
     localStorage.setItem('todos', JSON.stringify(todos));
+    // updates todo lists - can refactor this later so that instead of recreating
+    // lists from scracth you can find and remove specific todo
+    completedTodos = filterCompletedTodos();
+    completedTodoListsByDate = createDatedLists(completedTodos);
+    todoListsByDate = createDatedLists(todos);
   }
   
   function getTodos() {

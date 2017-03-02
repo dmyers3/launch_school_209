@@ -11,13 +11,13 @@
   <body>
     <input id="menu_toggle" type="checkbox">
     <nav>
-      <h2 class="all_todos active">All Todos <span class="count"></span></h2>
-      <ul>
+      <h2 class="all_todos active">All Todos<span class="count"></span></h2>
+      <ul class="all">
         <li class="">02/16 <span class="count">8</span></li>
         <li>03/16 <span class="count">2</span></li>
       </ul>
       <h2 class="completed">Completed</h2>
-      <ul>
+      <ul class="completed">
         <li class="completed">02/15</li>
       </ul>
     </nav>
@@ -134,7 +134,7 @@
     <script id='todos' type='text/x-handlebars'>
       {{#each todos}}
         <li data-id={{id}}>
-          <label class="modal_label" for="modal_toggle"><span class="todo_info">{{title}} - {{dueMonth}}/{{dueYear}}</span></label>
+          <label class="modal_label {{completed}}" for="modal_toggle"><span class="todo_info">{{title}} - {{numMonth}}/{{yearAbbrev}}</span></label>
           <a class="delete" href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a>
         </li>
       {{/each}}
