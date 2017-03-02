@@ -3,40 +3,22 @@
   <head>
     <title>Todos</title>
     <meta charset="UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
+    <script src="assets/javascript/todos.js"></script>
     <link rel="stylesheet" href="assets/stylesheets/todos.css" />
   </head>
   <body>
     <input id="menu_toggle" type="checkbox">
     <nav>
-      <h2 class="all_todos">All Todos <span class="count">18</span></h2>
-      <!--<dl>-->
-      <!--  <dt class="active">-->
-      <!--    03/16-->
-      <!--  </dt>-->
-      <!--  <dd class="active">-->
-      <!--    <span class="count">2</span>-->
-      <!--  </dd>-->
-      <!--  <dt>-->
-      <!--    04/16-->
-      <!--  </dt>-->
-      <!--  <dd>-->
-      <!--    1-->
-      <!--  </dd>-->
-      <!--</dl>-->
+      <h2 class="all_todos active">All Todos <span class="count"></span></h2>
       <ul>
-        <li class="active">02/16 <span class="count">8</span></li>
+        <li class="">02/16 <span class="count">8</span></li>
         <li>03/16 <span class="count">2</span></li>
-        <li>04/16 <span class="count">1</span></li>
-        <li>05/16 <span class="count">1</span></li>
-        <li>06/16 <span class="count">6</span></li>
       </ul>
       <h2 class="completed">Completed</h2>
       <ul>
         <li class="completed">02/15</li>
-        <li class="completed">03/15</li>
-        <li class="completed">04/15</li>
-        <li class="completed">05/15</li>
-        <li class="completed">06/14</li>
       </ul>
     </nav>
     <main>
@@ -44,38 +26,18 @@
         <label for="menu_toggle">
           <img src="assets/images/icon_menu.png" alt="menu"/>
         </label>
-        <h1>02/16 <span class="count">8</span></h1>
+        <h1><span class="title"></span>All Todos<span class="count"></span></h1>
       </header>
-      <h3>Add new to do</h3>
+      <h3 class="add_new">Add new to do</h3>
       <input type="checkbox" id="modal_toggle" name="modal_check" />
       <!--Enter "class="show_modal" on <ul> below to see modal-->
       <ul>
         <li>
-          <label class="modal_lable" for="modal_toggle">Item 1</label><img src="assets/images/icon_trash.png" alt="trash"/>
-        </li>
-        <li>
-          <label class="modal_lable" for="modal_toggle">Item 2</label><img src="assets/images/icon_trash.png" alt="trash"/>
-        </li>
-        <li>
-          <label class="modal_lable" for="modal_toggle">Item 3</label><img src="assets/images/icon_trash.png" alt="trash"/>
-        </li>
-        <li>
-          <label class="modal_lable" for="modal_toggle">Item 4</label><img src="assets/images/icon_trash.png" alt="trash"/>
-        </li>
-        <li>
-          <label class="modal_lable" for="modal_toggle">Item 5</label><img src="assets/images/icon_trash.png" alt="trash"/>
-        </li>
-        <li>
-          <label class="modal_lable" for="modal_toggle">Item 6</label><img src="assets/images/icon_trash.png" alt="trash"/>
-        </li>
-        <li>
-          <label class="modal_lable" for="modal_toggle">Item 7</label><img src="assets/images/icon_trash.png" alt="trash"/>
-        </li>
-        <li>
-          <label class="modal_lable" for="modal_toggle">Item 8</label><img src="assets/images/icon_trash.png" alt="trash"/>
-        </li>
-        <li>
-          <label class="modal_lable" for="modal_toggle">Item 9</label><img src="assets/images/icon_trash.png" alt="trash"/>
+          <div class="todo_container">
+            <a href="#">Item 1</a>
+            <img class="delete" src="assets/images/icon_trash.png" alt="trash"/>
+          </div>
+          <label class="modal_label" for="modal_toggle">Item 1</label><img src="assets/images/icon_trash.png" alt="trash"/>
         </li>
       </ul>
       <div class="modal">
@@ -161,11 +123,23 @@
                   <dd><textarea name="description" id="description" placeholder="Description"></textarea></dd>
                 </div>
               </dl>
-              <button type="submit">Save</button>
-              <button type="button">Mark as Complete</button>
+              <button type="submit" id="submit">Save</button>
+              <button type="button" id="mark_complete">Mark as Complete</button>
             </fieldset>
           </form>
         </div>
-   </main>
+    </main>
+    <script id='all_todos_lists' type='text/x-handlebars'>
+      {{#each lists}}
+        <li class="">{{date}} <span class="count">{{numTodos}}</span></li>
+      {{/each}}
+    </script>
+    <script id='todos' type='text/x-handlebars'>
+      {{#each todos}}
+        <li data-id={{id}}>
+          <label class="modal_label" for="modal_toggle">{{title}} - {{dueMonth}}/{{dueYear}}</label><img src="assets/images/icon_trash.png" alt="trash"/>
+        </li>
+      {{/each}}
+    </script>
   </body>
 </html> 

@@ -26,7 +26,7 @@ nav h2, nav .active {
 nav h2 {
   font-size: 18px;
   font-weight: normal;
-  padding: 0 30px 11px 100px;
+  padding: 11px 30px 11px 100px;
 }
 
 nav h2:before {
@@ -124,7 +124,7 @@ header img {
 h1 {
   font-size: 21px;
   font-weight: normal;
-  width: 94px;
+  width: 110px;
   padding: 28px 0 39px 12px;
 }
 
@@ -157,22 +157,28 @@ h3, main li, .modal_lable {
   cursor: pointer;
 }
 
-main li:before {
-  content: "";
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  background: transparent url("../images/icon_mini_unchecked.png") 0 0 no-repeat;
-  margin-right: 14px;
-}
+
+
+/*main li:before {*/
+/*  content: "";*/
+/*  display: inline-block;*/
+/*  width: 14px;*/
+/*  height: 14px;*/
+/*  background: transparent url("../images/icon_mini_unchecked.png") 0 0 no-repeat;*/
+/*  margin-right: 14px;*/
+/*  margin-left: 12px;*/
+/*}*/
 
 main li.completed:before {
   background: transparent url("../images/icon_mini_check.png") 0 0 no-repeat;
 }
 
 main li {
-  padding: 16px 0 16px 12px;
+  padding: 0px 0 0px 0px;
   border-top: 1px solid #e7e7e7;
+  padding-left: 30px;
+  background: transparent url("../images/icon_mini_unchecked.png") left center no-repeat;
+  
 }
 
 main li.completed {
@@ -184,7 +190,19 @@ main li:hover {
 }
 
 main li img {
+  display: inline-block;
   float: right;
+  padding: 16px 10px;
+}
+
+main li img:hover {
+  background: rgba(255, 0, 0, .4);
+}
+
+main li:after {
+  display: block;
+  content: '';
+  clear: both;
 }
 
 .modal {
@@ -279,7 +297,7 @@ main li img {
   outline: 9999px solid rgba(0,0,0,0.2);
 }
 
-#modal_toggle:checked + ul .modal_lable:before {
+#modal_toggle:checked + ul .modal_label:before {
   position: fixed;
   top: 0;
   right: 0;
@@ -289,10 +307,15 @@ main li img {
   z-index: 1;
 }
 
-.modal_lable {
+.modal_label {
   margin-left: -5px; /*label was making <li> offset a little to the right */
   display: inline-block;
-  width: 80%; /* makes more of <li> clickable to pop up modal */
+  padding: 16px 0;
+  width: 85%; /* makes more of <li> clickable to pop up modal */
+}
+
+.modal_label:hover {
+  background: rgba(0, 100, 205,.2);
 }
 
 @media (max-width: 768px) {
