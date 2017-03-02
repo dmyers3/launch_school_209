@@ -26,18 +26,15 @@
         <label for="menu_toggle">
           <img src="assets/images/icon_menu.png" alt="menu"/>
         </label>
-        <h1><span class="title"></span>All Todos<span class="count"></span></h1>
+        <h1><span class="title">All Todos</span><span class="count"></span></h1>
       </header>
       <h3 class="add_new">Add new to do</h3>
       <input type="checkbox" id="modal_toggle" name="modal_check" />
       <!--Enter "class="show_modal" on <ul> below to see modal-->
       <ul>
         <li>
-          <div class="todo_container">
-            <a href="#">Item 1</a>
-            <img class="delete" src="assets/images/icon_trash.png" alt="trash"/>
-          </div>
-          <label class="modal_label" for="modal_toggle">Item 1</label><img src="assets/images/icon_trash.png" alt="trash"/>
+          <label class="modal_label" for="modal_toggle">Item 1</label>
+          <a class="delete" href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a>
         </li>
       </ul>
       <div class="modal">
@@ -137,7 +134,8 @@
     <script id='todos' type='text/x-handlebars'>
       {{#each todos}}
         <li data-id={{id}}>
-          <label class="modal_label" for="modal_toggle">{{title}} - {{dueMonth}}/{{dueYear}}</label><img src="assets/images/icon_trash.png" alt="trash"/>
+          <label class="modal_label" for="modal_toggle"><span class="todo_info">{{title}} - {{dueMonth}}/{{dueYear}}</span></label>
+          <a class="delete" href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a>
         </li>
       {{/each}}
     </script>
