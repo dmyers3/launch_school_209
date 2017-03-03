@@ -45,14 +45,14 @@ $(function() {
   
   function sortByDate(dateArray) {
     return dateArray.sort(function(list1, list2) {
-      var list1Year = parseInt(list1.date.slice(3));
-      var list2Year = parseInt(list2.date.slice(3));
+      var list1Date = parseInt(list1.date.slice(3)) + parseInt(list1.date.slice(0,2))/13;
+      var list2Date = parseInt(list2.date.slice(3)) + parseInt(list2.date.slice(0,2))/13;
       if (list1.date.match("No Due Date")) {
         return -1;
       } else if (list2.date.match("No Due Date")) {
         return 1;
       } else {
-        return list1Year - list2Year;
+        return list1Date - list2Date;
       }
     });
   }
