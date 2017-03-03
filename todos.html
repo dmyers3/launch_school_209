@@ -13,12 +13,9 @@
     <nav>
       <h2 class="all_todos active">All Todos<span class="count"></span></h2>
       <ul class="all">
-        <li class="">02/16 <span class="count">8</span></li>
-        <li>03/16 <span class="count">2</span></li>
       </ul>
       <h2 class="completed">Completed<span class="count">8</span></h2>
       <ul class="completed">
-        <li class="completed">02/15</li>
       </ul>
     </nav>
     <main>
@@ -29,11 +26,9 @@
         <h1><span class="title">All Todos</span><span class="count"></span></h1>
       </header>
       <h3 class="add_new">Add new to do</h3>
-      <input type="checkbox" id="modal_toggle" name="modal_check" />
+      <!--<input type="checkbox" id="modal_toggle" name="modal_check" />-->
       <ul>
         <li>
-          <label class="modal_label" for="modal_toggle">Item 1</label>
-          <a class="delete" href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a>
         </li>
       </ul>
       <div class="modal">
@@ -42,12 +37,12 @@
               <dl>
                 <div>
                   <dt><label for="title">Title</label></dt>
-                  <dd><input type="text" name="title" id="title" /></dd>
+                  <dd><input type="text" name="title" id="title" required/></dd>
                 </div>
                 <div>
                   <dt><label for="day">Due Date</label></dt>
                   <dd>
-                    <select name="day" id="day" required>
+                    <select name="day" id="day">
                       <option value="" disabled="disabled" selected="selected">Day</option>
                       <option>1</option>       
                       <option>2</option>       
@@ -84,7 +79,7 @@
                     <span class="slash"> / </span>
                   </dd>
                   <dd>
-                    <select name="month" id="month" required>
+                    <select name="month" id="month">
                       <option value="" disabled="disabled" selected="selected">Month</option>
                       <option>January</option>       
                       <option>February</option>       
@@ -102,7 +97,7 @@
                     <span class="slash"> / </span>
                   </dd>
                   <dd>
-                    <select name="year" id="year" required>
+                    <select name="year" id="year">
                       <option value="" disabled="disabled" selected="selected">Year</option>
                       <option>2014</option>       
                       <option>2015</option>       
@@ -133,7 +128,7 @@
     <script id='todos' type='text/x-handlebars'>
       {{#each todos}}
         <li data-id={{id}}>
-          <label class="modal_label {{completed}}" for="modal_toggle"><span class="todo_info">{{title}} - {{numMonth}}/{{yearAbbrev}}</span></label>
+          <label class="modal_label {{completed}}" for="modal_toggle"><span class="todo_info">{{title}} - {{formattedDueDate}}</span></label>
           <a class="delete" href="#"><img src="assets/images/icon_trash.png" alt="trash"/></a>
         </li>
       {{/each}}

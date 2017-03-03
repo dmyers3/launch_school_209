@@ -1,44 +1,3 @@
-
-
-// todo object
-//   title
-//   due day
-//   due month
-//   due year
-//   description
-//   completed (bool)
-//   id (auto-generated and unique)
-
-// todos object
-//   month
-//   year
-//   number of todos
-//   has completed?
-  
-// Main area will be handlebars
-
-// heading will be title, count
-// link to add new todo - this pops up modal
-
-// list of todos
-
-// when submit new todo, create new todo object and display all todos in main
-// when edit current todo, edits info and stays on same page in main
-
-// render All Todos Lists
-// render Completed Lists
-// render Todo List
-// create New Todo
-// Delete Todo
-// Edit todo
-
-
-
-
-
-
-
-
 $(function() {
   var listsTemplate = Handlebars.compile($('#all_todos_lists').html());
   var todosTemplate = Handlebars.compile($('#todos').html());
@@ -52,8 +11,7 @@ $(function() {
       this.description = description;
       this.completed = 'notCompleted';
       this.id = id;
-      this.numMonth = parseMonth(dueMonth);
-      this.yearAbbrev = parseYear(dueYear);
+      this.formattedDueDate = formatDueDate(dueMonth, dueYear);
       return this;
     }
   };
@@ -67,14 +25,36 @@ $(function() {
   createDatedLists(todos);
   renderNav();
   renderMain('All Todos', todos);
+  console.log(todos);
+  
+  function formatDueDate(month, year) {
+    if (month === null || year === null) {
+      return "No Due Date";
+    } else {
+      return parseMonth(month) + '/' + parseYear(year);
+    }
+  }
   
   function renderNav() {
-    $('.all_todos + ul').html(listsTemplate({lists: todoListsByDate}))
+    $('.all_todos + ul').html(listsTemplate({lists: sortByDate(todoListsByDate)}))
     $('.all_todos .count').text(todos.length);
-    $('.completed + ul').html(listsTemplate({lists: completedTodoListsByDate}))
-    console.log(completedTodoListsByDate);
+    $('.completed + ul').html(listsTemplate({lists: sortByDate(completedTodoListsByDate)}))
     $('h2.completed .count').text(completedTodos.length);
     $('ul.completed li').addClass('completed');
+  }
+  
+  function sortByDate(dateArray) {
+    return dateArray.sort(function(list1, list2) {
+      var list1Year = parseInt(list1.date.slice(3));
+      var list2Year = parseInt(list2.date.slice(3));
+      if (list1.date.match("No Due Date")) {
+        return -1;
+      } else if (list2.date.match("No Due Date")) {
+        return 1;
+      } else {
+        return list1Year - list2Year;
+      }
+    });
   }
   
   function renderMain(title, todos) {
@@ -129,7 +109,6 @@ $(function() {
   
   $('main ul').on('click', function(e) {
     e.preventDefault();
-    console.log(e.target.nodeName);
     var todoID = $(e.target).closest('li').attr('data-id');
     if (e.target.nodeName === 'SPAN') {
       displayEditModal(todoID);
@@ -168,7 +147,15 @@ $(function() {
       todo.completed = 'notCompleted';
     }
     setTodos(todos);
-    // var viewableTodos = currentTodos();
+    renderPage(currentHeader(), currentTodos());
+  }
+  
+  function markTodoCompleted(todoID) {
+    var todo = todos.filter(function(todo) {
+      return parseInt(todo.id) === parseInt(todoID);
+    })[0];
+    todo.completed = 'completed';
+    setTodos(todos);
     renderPage(currentHeader(), currentTodos());
   }
   
@@ -220,37 +207,25 @@ $(function() {
     renderPage(currentHeader(), currentTodos());
   }
   
-  // $('main ul').on('click', 'img', function(e) {
-  //   e.preventDefault();
-  //   var todoID = $(e.target).closest('li').attr('data-id');
-  //   matchingTodoIndex = todos.findIndex(function(todo) {
-  //     return parseInt(todo.id) === parseInt(todoID);
-  //   });
-  //   todos.splice(matchingTodoIndex, 1);
-  //   setTodos(todos);
-  //   renderNav();
-  //   renderMain();
-  // });
-  
-  // this function iterates through every todo and assigns them to arrays sorted
-  // by month/year
+  // this function iterates through every todo and assigns them to an array in
+  // an object with a unique month/year
   function createDatedLists(todos) {
     var datedLists = []
     // { date: '04/17', todos: [todo1, todo2, todo3], numTodos = this.todos.length; }
     
     todos.forEach(function(todo) {
-      var stringDate = parseMonth(todo.dueMonth) + '/' + parseYear(todo.dueYear);
+      var dueDate = todo.formattedDueDate;
       
-      if (todoExistsInDatedList(stringDate, datedLists)) {
+      if (todoExistsInDatedList(dueDate, datedLists)) {
         var listIndex = datedLists.findIndex(function(list) {
-          return list.date === stringDate;
+          return list.date === dueDate;
         });
         datedLists[listIndex].todos.push(todo);
         datedLists[listIndex].numTodos += 1;
       } else {
         var newDateObject = {}
-        newDateObject[stringDate] = [todo];
-        datedLists.push({ date: stringDate, todos: [todo], numTodos: 1});
+        newDateObject[dueDate] = [todo];
+        datedLists.push({ date: dueDate, todos: [todo], numTodos: 1});
       }
     });
     return datedLists;
@@ -258,15 +233,15 @@ $(function() {
   
   // [ {'2/17' : [todo1, todo2]}, {'5/18' : [todo3, todo4]}]
   
-  function todoExistsInDatedList(stringDate, datedLists) {
+  function todoExistsInDatedList(dueDate, datedLists) {
     return datedLists.some(function(list) {
-      return list.date === stringDate;
+      return list.date === dueDate;
     });
   }
   
   function parseMonth(month) {
     var monthNum = new Date(Date.parse(month +" 1, 2012")).getMonth() + 1;
-    if (monthNum.length === 1) {
+    if (String(monthNum).length === 1) {
       monthNum = '0' + monthNum;
     }
     return monthNum;
@@ -287,6 +262,12 @@ $(function() {
     $('nav .active').removeClass('active');
     $(e.target).addClass('active');
     var date = $(e.target).text().split(' ')[0];
+    if ($(e.target).text().match('No Due Date')) {
+      date = "No Due Date";
+      $('h1').css('width', '150px');
+    } else {
+       $('h1').css('width', '125px');
+    }
     
     if ($(e.target).closest('ul').attr('class') === 'all') {
       var datedTodos = getTodosFromDateList(todoListsByDate, date);
@@ -301,8 +282,6 @@ $(function() {
     e.preventDefault();
     $('nav .active').removeClass('active');
     $(e.target).addClass('active');
-    console.log($(e.target).text().trim());
-    console.log($(e.target).text().trim().length);
     if ($(e.target).text().match('All Todos')) {
       renderMain('All Todos', todos);
     } else if ($(e.target).text().match('Completed')) {
@@ -314,19 +293,17 @@ $(function() {
     var chosenList = list.filter(function(listElement) {
       return listElement.date.trim() === selectedDate.trim();
     })[0] || {};
-    console.log(chosenList);
     return chosenList.todos || [];
   }
   
   function editTodo(input, todoID) {
     var todo = getTodoByID(todoID);
-    todo.title = input[0].value;
-    todo.dueDay = input[1].value;
-    todo.dueMonth = input[2].value;
-    todo.dueYear = input[3].value;
-    todo.description = input[4].value;
-    todo.numMonth = parseMonth(todo.dueMonth);
-    todo.yearAbbrev = parseYear(todo.dueYear);
+    todo.title = input[0];
+    todo.dueDay = input[1];
+    todo.dueMonth = input[2];
+    todo.dueYear = input[3];
+    todo.description = input[4];
+    todo.formattedDueDate = formatDueDate(todo.dueMonth, todo.dueYear);
     setTodos(todos);
   }
  
@@ -334,7 +311,7 @@ $(function() {
   function addButtonEventListeners(type, todoID) {
     $('form').on('submit', function(e) {
       e.preventDefault();
-      var input = $('form').serializeArray();
+      var input = serializeFormData();
       if (type === 'new') {
         createNewTodo(input);
       } else if (type === 'edit') {
@@ -348,10 +325,20 @@ $(function() {
       if (type === 'new') {
         alert("Cannot mark item complete since it hasn't been created yet!")
       } else {
-        toggleTodoCompleted(todoID);
+        markTodoCompleted(todoID);
         toggleModal();
       }
     })
+  }
+  
+  function serializeFormData() {
+    formDataArray = []
+    formDataArray[0] = $('#title').val();
+    formDataArray[1] = $('#day').val();
+    formDataArray[2] = $('#month').val();
+    formDataArray[3] = $('#year').val();
+    formDataArray[4] = $('#description').val();
+    return formDataArray;
   }
   
   function assignID() {
@@ -361,11 +348,11 @@ $(function() {
   }
   
   function createNewTodo(input) {
-    var title = input[0].value;
-    var day = input[1].value;
-    var month = input[2].value;
-    var year = input[3].value;
-    var description = input[4].value;
+    var title = input[0];
+    var day = input[1];
+    var month = input[2];
+    var year = input[3];
+    var description = input[4];
     var id = assignID();
     todos.push(Object.create(todo).init(title, day, month, year, description, id));
     setTodos(todos);
