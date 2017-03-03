@@ -70,6 +70,10 @@ nav li {
   cursor: pointer;
 }
 
+nav li.completed {
+  text-decoration: line-through;
+}
+
 nav .active {
   background-color: #383f5f;
 }
@@ -154,11 +158,6 @@ main li .todo_info:hover {
 }
 
 
-.modal {
-  display: none;
-  padding: 38px 0 0 30px;
-}
-
 .modal textarea, .modal input, .modal select {
   font: normal 16px Helvetica, Arial, sans-serif;
   padding: 2px 0 0 10px;
@@ -234,8 +233,10 @@ main li .todo_info:hover {
   cursor: pointer;
 }
 
-.show_modal + .modal, #modal_toggle:checked ~ .modal {
-  display: block;
+
+.modal {
+  display: none;
+  padding: 38px 0 0 30px;
   position: absolute;
   top: 106px;
   left: 106px;
@@ -246,7 +247,8 @@ main li .todo_info:hover {
   outline: 9999px solid rgba(0,0,0,0.2);
 }
 
-#modal_toggle:checked + ul .modal_label:before {
+ul .modal_label:before {
+  display: none;
   position: fixed;
   top: 0;
   right: 0;
@@ -283,7 +285,6 @@ main .completed {
   background: transparent url("../images/icon_mini_check.png") left center no-repeat;
   text-decoration: line-through;
   color: #b3b3b3;
-  
 }
 
 .modal_label:hover {

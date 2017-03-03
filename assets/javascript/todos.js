@@ -72,7 +72,9 @@ $(function() {
     $('.all_todos + ul').html(listsTemplate({lists: todoListsByDate}))
     $('.all_todos .count').text(todos.length);
     $('.completed + ul').html(listsTemplate({lists: completedTodoListsByDate}))
-    
+    console.log(completedTodoListsByDate);
+    $('h2.completed .count').text(completedTodos.length);
+    $('ul.completed li').addClass('completed');
   }
   
   function renderMain(title, todos) {
@@ -106,17 +108,34 @@ $(function() {
   }
   
   function toggleModal() {
-    $('#modal_toggle').click();
+    // fades out Modal and turns off Event listeners
+    if ($('.modal').is(':visible')) {
+      $('.modal').fadeOut(500, function() {
+        $('form').off('submit');
+        $('#mark_complete').off('click');
+        $(document).off('click');
+      });
+    } else {
+      $('.modal').fadeIn(500, function() {
+        // Adds Event listener for click outside modal
+        $(document).on('click', function(e) { 
+          if(!$(e.target).closest('.modal').length) {
+            toggleModal();
+          }        
+        })
+      });
+    }
   }
   
   $('main ul').on('click', function(e) {
     e.preventDefault();
+    console.log(e.target.nodeName);
     var todoID = $(e.target).closest('li').attr('data-id');
     if (e.target.nodeName === 'SPAN') {
       displayEditModal(todoID);
     } else if (e.target.nodeName === 'LABEL') {
       if ($('.modal').is(':visible')) {
-        $('#modal_toggle').click();
+        toggleModal();
       } else {
         toggleTodoCompleted(todoID);
       }
@@ -332,11 +351,6 @@ $(function() {
         toggleTodoCompleted(todoID);
         toggleModal();
       }
-    })
-    // turn off button listeners if modal is clicked out of
-    $('#modal_toggle').on('click', function() {
-      $('form').off('submit');
-      $('#mark_complete').off('click');
     })
   }
   
