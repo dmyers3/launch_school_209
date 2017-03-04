@@ -122,7 +122,7 @@
     </main>
     <script id='all_todos_lists' type='text/x-handlebars'>
       {{#each lists}}
-        <li class="">{{date}} <span class="count">{{numTodos}}</span></li>
+        <li class="{{active}}">{{title}} <span class="count">{{numTodos}}</span></li>
       {{/each}}
     </script>
     <script id='todos' type='text/x-handlebars'>
