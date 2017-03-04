@@ -41,19 +41,29 @@ $(function() {
     },
     
     sortByComplete: function() {
-      
+      return this.todos.sort(function(todo1, todo2) {
+        if (todo1.completed === 'notCompleted' && todo2.completed === 'completed') {
+          return -1;
+        } else if (todo1.completed === 'completed' && todo2.completed === 'notCompleted') {
+          return 1;
+        } else {
+          return parseInt(todo1.id) - parseInt(todo2.id);
+        }
+      })
     }
   };
   
   var TodoCollections = {
     init: function() {
       this.allTodos = Object.create(TodoCollection).init('All Todos', 'All Todos', todos);
+      this.allTodos.active = 'active';
       this.completedTodos = Object.create(TodoCollection).init('Completed Todos', 'Completed Todos', this.allTodos.filterCompletedTodos());
       this.datedTodos = this.createDatedCollections(this.allTodos);
       this.datedCompletedTodos = this.createDatedCollections(this.completedTodos);
-      this.allCollections = [this.allTodos].concat([this.completedTodos]).concat(this.datedTodos).concat(this.datedCompletedTodos);
-      console.log(this.allCollections);
       return this;
+    },
+    allCollections: function() {
+      return [this.allTodos].concat([this.completedTodos]).concat(this.datedTodos).concat(this.datedCompletedTodos);
     },
     createDatedCollections: function(collection) {
       var datedCollections = []
@@ -88,6 +98,15 @@ $(function() {
           return list1Date - list2Date;
         }
       });
+    },
+    getActiveCollection: function() {
+      return this.allCollections().filter(function(collection) {
+        return collection.active === 'active';
+      })[0];
+      
+    },
+    setActiveCollection: function() {
+      
     },
     
   };
@@ -167,20 +186,16 @@ $(function() {
     },
     renderNav: function() {
       $('.all_todos + ul').html(listsTemplate({lists: todoCollections.sortByDate(todoCollections.datedTodos)}));
-      console.log(todoCollections.sortByDate(todoCollections.datedTodos));
       $('.all_todos .count').text(todoCollections.allTodos.numTodos());
       $('.completed + ul').html(listsTemplate({lists: todoCollections.sortByDate(todoCollections.datedCompletedTodos)}));
       $('h2.completed .count').text(todoCollections.completedTodos.numTodos());
       $('ul.completed li').addClass('completed');
       },
     renderMain: function() {
-      $('main h1 .title').text(this.activeTitle());
-      $('main h1 .count').text(todos.length);
-      $('main ul').html(todosTemplate({todos: sortTodos(todos)}));
+      $('main h1 .title').text(todoCollections.getActiveCollection().title);
+      $('main h1 .count').text(todoCollections.getActiveCollection().numTodos());
+      $('main ul').html(todosTemplate({todos: todoCollections.getActiveCollection().sortByComplete()}));
     },
-    activeTitle: function() {
-      return "All Todos";
-    }
   }
   
   
@@ -299,14 +314,6 @@ $(function() {
     }
   }
   
-  function sortByDate(dateArray) {
-   
-  }
- 
-  function filterCompletedTodos() {
-   
-  }
-  
   function displayEditModal(todoID) {
     var todo = todos.filter(function(todo) {
       return parseInt(todo.id) === parseInt(todoID);
@@ -358,18 +365,6 @@ $(function() {
     }
   }
   
-  // sorts by completeness
-  function sortTodos(todos) {
-    return todos.sort(function(todo1, todo2) {
-      if (todo1.completed === 'notCompleted' && todo2.completed === 'completed') {
-        return -1;
-      } else if (todo1.completed === 'completed' && todo2.completed === 'notCompleted') {
-        return 1;
-      } else {
-        return parseInt(todo1.id) - parseInt(todo2.id);
-      }
-    })
-  }
   
   function deleteTodo(todoID) {
     // removes todo from todo Array and resaves array in storage
@@ -379,13 +374,6 @@ $(function() {
     todos.splice(matchingTodoIndex, 1);
     setTodos(todos);
     renderPage(currentHeader(), currentTodos());
-  }
-  
-  // this function iterates through every todo and assigns them to an array in
-  // an object with a unique month/year. Each object is then contained in an array
-  // e.g { date: '04/17', todos: [todo1, todo2, todo3], numTodos = todos.length; }
-  function createDatedLists(todos) {
-    
   }
   
  
@@ -479,8 +467,6 @@ $(function() {
   }
   
   TodoProgram.init();
-  
-  
   
   
 })
