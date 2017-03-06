@@ -22,7 +22,7 @@ $(function() {
       if (this.dueMonth === null || this.dueYear === null) {
         return "No Due Date";
       } else {
-        return parseMonth(month) + '/' + parseYear(year);
+        return this.parseMonth(month) + '/' + this.parseYear(year);
       }
     },
     parseMonth: function () {
@@ -35,6 +35,28 @@ $(function() {
     parseYear: function () {
       return this.dueYear.slice(2);
     },
+    toggleCompleted: function() {
+      if (this.completed === 'notCompleted') {
+        this.completed = 'completed';
+      } else {
+        this.completed = 'notCompleted';
+      }
+      TodoProgram.renderNav();
+      TodoProgram.renderMain();
+    },
+    markCompleted: function() {
+      this.completed = 'completed';
+      TodoProgram.renderNav();
+      TodoProgram.renderMain();
+    },
+    editTodo: function(input) {
+      this.title = input[0];
+      this.dueDay = input[1];
+      this.dueMonth = input[2];
+      this.dueYear = input[3];
+      this.description = input[4];
+      this.formattedDueDate = this.formatDueDate();
+    },
   };
   
   var TodoCollection = {
@@ -45,6 +67,15 @@ $(function() {
       this.active = ""
       return this;
     },
+    deleteTodo: function(todo) {
+      // removes todo from todo Array and resaves array in storage
+      matchingTodoIndex = this.todos.findIndex(function(todoMatch) {
+        return parseInt(todo.id) === parseInt(todoMatch.id);
+      });
+      todos.splice(matchingTodoIndex, 1);
+      TodoProgram.renderNav();
+      TodoProgram.renderMain();
+    },
     numTodos: function() {
       return this.todos.length;
     },
@@ -53,7 +84,11 @@ $(function() {
         return todo.completed === 'completed';
       });
     },
-    
+    getTodoByID: function(todoID) {
+      return this.todos.filter(function(todo) {
+        return parseInt(todo.id) === parseInt(todoID);
+      })[0];
+    },
     sortByComplete: function() {
       return this.todos.sort(function(todo1, todo2) {
         if (todo1.completed === 'notCompleted' && todo2.completed === 'completed') {
@@ -148,7 +183,7 @@ $(function() {
   var TodoProgram = {
     init: function() {
       id = localStorage.id || 0;
-      todos = getTodos() || [];
+      todos = this.getTodos() || [];
       todoCollections = Object.create(TodoCollections).init();
       this.createPartials();
       this.initialEventListeners();
@@ -172,16 +207,17 @@ $(function() {
        $('main ul').on('click', function(e) {
         e.preventDefault();
         var todoID = $(e.target).closest('li').attr('data-id');
+        var todo = todoCollections.allTodos.getTodoByID(todoID);
         if (e.target.nodeName === 'SPAN') {
-          displayEditModal(todoID);
+          self.displayEditModal(todoID);
         } else if (e.target.nodeName === 'LABEL') {
           if ($('.modal').is(':visible')) {
-            toggleModal();
+            self.toggleModal();
           } else {
-            toggleTodoCompleted(todoID);
+            todo.toggleCompleted();
           }
         } else if (e.target.nodeName === 'A' || e.target.nodeName === 'IMG') {
-          deleteTodo(todoID);
+          todoCollections.allTodos.deleteTodo(todo);
         }
       });
       
@@ -223,7 +259,7 @@ $(function() {
         self.setTodos();
       })
     },
-    addButtonEventListeners: function(type, todoID) {
+    addButtonEventListeners: function(type, todo) {
       self = this;
       $('form').on('submit', function(e) {
       e.preventDefault();
@@ -231,7 +267,7 @@ $(function() {
       if (type === 'new') {
         todoCollections.createNewTodo(input);
       } else if (type === 'edit') {
-        editTodo(input, todoID);
+        todo.editTodo(input);
       }
       self.toggleModal();
       self.renderNav();
@@ -242,8 +278,8 @@ $(function() {
       if (type === 'new') {
         alert("Cannot mark item complete since it hasn't been created yet!")
       } else {
-        markTodoCompleted(todoID);
-        this.toggleModal();
+        todo.markCompleted();
+        self.toggleModal();
       }
     })
     },
@@ -284,6 +320,11 @@ $(function() {
     }
     this.toggleModal();
     },
+    displayEditModal: function(todoID) {
+      var todo = todoCollections.allTodos.getTodoByID(todoID);
+      this.displayModal(todo);
+      this.addButtonEventListeners('edit', todo);
+    },
     toggleModal: function() {
        var self = this;
        // fades out Modal and turns off Event listeners
@@ -298,7 +339,7 @@ $(function() {
           // Adds Event listener for click outside modal
           $(document).on('click', function(e) { 
             if(!$(e.target).closest('.modal').length) {
-              this.toggleModal();
+              self.toggleModal();
             }        
           })
         });
@@ -306,6 +347,9 @@ $(function() {
     },
     setTodos: function() {
        localStorage.setItem('todos', JSON.stringify(todoCollections.allTodos.todos));
+    },
+    getTodos: function() {
+      return JSON.parse(localStorage.getItem('todos'));
     },
   }
   
@@ -361,39 +405,7 @@ $(function() {
 
   
   
-  function getTodos() {
-    return JSON.parse(localStorage.getItem('todos'));
-  }
   
-  function displayEditModal(todoID) {
-    var todo = todos.filter(function(todo) {
-      return parseInt(todo.id) === parseInt(todoID);
-    })[0];
-    displayModal(todo);
-    addButtonEventListeners('edit', todoID);
-  }
-  
-  function toggleTodoCompleted(todoID) {
-    var todo = todos.filter(function(todo) {
-      return parseInt(todo.id) === parseInt(todoID);
-    })[0];
-    if (todo.completed === 'notCompleted') {
-      todo.completed = 'completed';
-    } else {
-      todo.completed = 'notCompleted';
-    }
-    setTodos(todos);
-    renderPage(currentHeader(), currentTodos());
-  }
-  
-  function markTodoCompleted(todoID) {
-    var todo = todos.filter(function(todo) {
-      return parseInt(todo.id) === parseInt(todoID);
-    })[0];
-    todo.completed = 'completed';
-    setTodos(todos);
-    renderPage(currentHeader(), currentTodos());
-  }
   
   function currentHeader() {
     return $('main .title').text();
@@ -417,23 +429,6 @@ $(function() {
   }
   
   
-  function deleteTodo(todoID) {
-    // removes todo from todo Array and resaves array in storage
-    matchingTodoIndex = todos.findIndex(function(todo) {
-      return parseInt(todo.id) === parseInt(todoID);
-    });
-    todos.splice(matchingTodoIndex, 1);
-    setTodos(todos);
-    renderPage(currentHeader(), currentTodos());
-  }
-  
-  
-  function getTodoByID(todoID) {
-    return todos.filter(function(todo) {
-      return parseInt(todo.id) === parseInt(todoID);
-    })[0];
-  }
-  
   function getTodosFromDateList(list, selectedDate) {
     var chosenList = list.filter(function(listElement) {
       return listElement.date.trim() === selectedDate.trim();
@@ -441,16 +436,6 @@ $(function() {
     return chosenList.todos || [];
   }
   
-  function editTodo(input, todoID) {
-    var todo = getTodoByID(todoID);
-    todo.title = input[0];
-    todo.dueDay = input[1];
-    todo.dueMonth = input[2];
-    todo.dueYear = input[3];
-    todo.description = input[4];
-    todo.formattedDueDate = formatDueDate(todo.dueMonth, todo.dueYear);
-    setTodos(todos);
-  }
  
   
   TodoProgram.init();
