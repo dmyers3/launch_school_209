@@ -1,3 +1,5 @@
+// NEED TO IMPLEMENT ACTIVE NAV FUNCTIONALITY (Change active todoCollection based on what nav is clicked)
+
 $(function() {
   var id;
   var todos;
@@ -5,11 +7,6 @@ $(function() {
   var todosTemplate;
     
   var Todo = {
-    assignID: function() {
-      id = parseInt(id, 10) + 1;
-      localStorage.id = id;
-      return id;
-    },
     init: function(title, dueDay, dueMonth, dueYear, description, id) {
       this.title = title;
       this.dueDay = dueDay;
@@ -18,8 +15,25 @@ $(function() {
       this.description = description;
       this.completed = 'notCompleted';
       this.id = id;
-      this.formattedDueDate = formatDueDate(dueMonth, dueYear);
+      this.formattedDueDate = this.formatDueDate();
       return this;
+    },
+    formatDueDate: function() {
+      if (this.dueMonth === null || this.dueYear === null) {
+        return "No Due Date";
+      } else {
+        return parseMonth(month) + '/' + parseYear(year);
+      }
+    },
+    parseMonth: function () {
+      var monthNum = new Date(Date.parse(this.dueMonth +" 1, 2012")).getMonth() + 1;
+      if (String(monthNum).length === 1) {
+        monthNum = '0' + monthNum;
+      }
+      return monthNum;
+    },
+    parseYear: function () {
+      return this.dueYear.slice(2);
     },
   };
   
@@ -57,13 +71,24 @@ $(function() {
     init: function() {
       this.allTodos = Object.create(TodoCollection).init('All Todos', 'All Todos', todos);
       this.allTodos.active = 'active';
-      this.completedTodos = Object.create(TodoCollection).init('Completed Todos', 'Completed Todos', this.allTodos.filterCompletedTodos());
-      this.datedTodos = this.createDatedCollections(this.allTodos);
-      this.datedCompletedTodos = this.createDatedCollections(this.completedTodos);
       return this;
+    },
+    assignID: function() {
+      id = parseInt(id, 10) + 1;
+      localStorage.id = id;
+      return id;
     },
     allCollections: function() {
       return [this.allTodos].concat([this.completedTodos]).concat(this.datedTodos).concat(this.datedCompletedTodos);
+    },
+    completedTodos: function() {
+      return Object.create(TodoCollection).init('Completed Todos', 'Completed Todos', this.allTodos.filterCompletedTodos());
+    },
+    datedTodos: function() {
+      return this.createDatedCollections(this.allTodos);
+    },
+    datedCompletedTodos: function() {
+      return this.createDatedCollections(this.completedTodos());
     },
     createDatedCollections: function(collection) {
       var datedCollections = []
@@ -80,6 +105,15 @@ $(function() {
         }
       });
       return datedCollections;
+    },
+    createNewTodo: function(input) {
+      var title = input[0];
+      var day = input[1];
+      var month = input[2];
+      var year = input[3];
+      var description = input[4];
+      var id = this.assignID();
+      this.allTodos.todos.push(Object.create(Todo).init(title, day, month, year, description, id));
     },
     todoDateExists: function(dueDate, datedLists) {
       return datedLists.some(function(list) {
@@ -117,7 +151,7 @@ $(function() {
       todos = getTodos() || [];
       todoCollections = Object.create(TodoCollections).init();
       this.createPartials();
-      this.eventListeners();
+      this.initialEventListeners();
       this.renderNav();
       this.renderMain();
     },
@@ -125,12 +159,13 @@ $(function() {
       listsTemplate = Handlebars.compile($('#all_todos_lists').html());
       todosTemplate = Handlebars.compile($('#todos').html());
     },
-    eventListeners: function() {
+    initialEventListeners: function() {
+      var self = this;
       // Event Listener for Add New
       $('.add_new').on('click', function(e) {
         e.preventDefault();
-        displayModal();
-        addButtonEventListeners('new')
+        self.displayModal();
+        self.addButtonEventListeners('new')
       })
       
       // Event Listener for clicking on element in Main Todo area
@@ -183,18 +218,94 @@ $(function() {
           renderMain('Completed ', completedTodos)
         }
       })
+      
+      $(window).on('unload', function(e) {
+        self.setTodos();
+      })
+    },
+    addButtonEventListeners: function(type, todoID) {
+      self = this;
+      $('form').on('submit', function(e) {
+      e.preventDefault();
+      var input = self.serializeFormData();
+      if (type === 'new') {
+        todoCollections.createNewTodo(input);
+      } else if (type === 'edit') {
+        editTodo(input, todoID);
+      }
+      self.toggleModal();
+      self.renderNav();
+      self.renderMain();
+    })
+    $('#mark_complete').on('click', function(e) {
+      e.preventDefault();
+      if (type === 'new') {
+        alert("Cannot mark item complete since it hasn't been created yet!")
+      } else {
+        markTodoCompleted(todoID);
+        this.toggleModal();
+      }
+    })
+    },
+    serializeFormData: function() {
+      var formDataArray = [];
+      formDataArray[0] = $('#title').val();
+      formDataArray[1] = $('#day').val();
+      formDataArray[2] = $('#month').val();
+      formDataArray[3] = $('#year').val();
+      formDataArray[4] = $('#description').val();
+      return formDataArray;
     },
     renderNav: function() {
-      $('.all_todos + ul').html(listsTemplate({lists: todoCollections.sortByDate(todoCollections.datedTodos)}));
+      $('.all_todos + ul').html(listsTemplate({lists: todoCollections.sortByDate(todoCollections.datedTodos())}));
       $('.all_todos .count').text(todoCollections.allTodos.numTodos());
-      $('.completed + ul').html(listsTemplate({lists: todoCollections.sortByDate(todoCollections.datedCompletedTodos)}));
-      $('h2.completed .count').text(todoCollections.completedTodos.numTodos());
+      $('.completed + ul').html(listsTemplate({lists: todoCollections.sortByDate(todoCollections.datedCompletedTodos())}));
+      $('h2.completed .count').text(todoCollections.completedTodos().numTodos());
       $('ul.completed li').addClass('completed');
       },
     renderMain: function() {
       $('main h1 .title').text(todoCollections.getActiveCollection().title);
       $('main h1 .count').text(todoCollections.getActiveCollection().numTodos());
       $('main ul').html(todosTemplate({todos: todoCollections.getActiveCollection().sortByComplete()}));
+    },
+    displayModal: function(todo) {
+      if (todo) {
+      $('#title').val(todo.title);
+      $('#day').val(todo.dueDay);
+      $('#month').val(todo.dueMonth);
+      $('#year').val(todo.dueYear);
+      $('#description').val(todo.description);
+    } else {
+      $('#title').val('');
+      $('#day').val('');
+      $('#month').val('');
+      $('#year').val('');
+      $('#description').val('');
+    }
+    this.toggleModal();
+    },
+    toggleModal: function() {
+       var self = this;
+       // fades out Modal and turns off Event listeners
+      if ($('.modal').is(':visible')) {
+        $('.modal').fadeOut(500, function() {
+          $('form').off('submit');
+          $('#mark_complete').off('click');
+          $(document).off('click');
+        });
+      } else {
+        $('.modal').fadeIn(500, function() {
+          // Adds Event listener for click outside modal
+          $(document).on('click', function(e) { 
+            if(!$(e.target).closest('.modal').length) {
+              this.toggleModal();
+            }        
+          })
+        });
+      }
+    },
+    setTodos: function() {
+       localStorage.setItem('todos', JSON.stringify(todoCollections.allTodos.todos));
     },
   }
   
@@ -249,69 +360,9 @@ $(function() {
     
 
   
-  function formatDueDate(month, year) {
-    if (month === null || year === null) {
-      return "No Due Date";
-    } else {
-      return parseMonth(month) + '/' + parseYear(year);
-    }
-  }
-  
-  function renderPage(title, todos) {
-    renderNav();
-    renderMain(title, todos);
-  }
-
-  
-  function setTodos(todos) {
-    localStorage.setItem('todos', JSON.stringify(todos));
-    // updates todo lists - could refactor this later so that instead of recreating
-    // lists from scracth you can find and remove/add/update specific todo
-    completedTodos = filterCompletedTodos();
-    completedTodoListsByDate = createDatedLists(completedTodos);
-    todoListsByDate = createDatedLists(todos);
-  }
   
   function getTodos() {
     return JSON.parse(localStorage.getItem('todos'));
-  }
-  
-  function displayModal(todo) {
-    if (todo) {
-      $('#title').val(todo.title);
-      $('#day').val(todo.dueDay);
-      $('#month').val(todo.dueMonth);
-      $('#year').val(todo.dueYear);
-      $('#description').val(todo.description);
-    } else {
-      $('#title').val('');
-      $('#day').val('');
-      $('#month').val('');
-      $('#year').val('');
-      $('#description').val('');
-    }
-    toggleModal();
-    
-  }
-  
-  function toggleModal() {
-    // fades out Modal and turns off Event listeners
-    if ($('.modal').is(':visible')) {
-      $('.modal').fadeOut(500, function() {
-        $('form').off('submit');
-        $('#mark_complete').off('click');
-        $(document).off('click');
-      });
-    } else {
-      $('.modal').fadeIn(500, function() {
-        // Adds Event listener for click outside modal
-        $(document).on('click', function(e) { 
-          if(!$(e.target).closest('.modal').length) {
-            toggleModal();
-          }        
-        })
-      });
-    }
   }
   
   function displayEditModal(todoID) {
@@ -376,19 +427,6 @@ $(function() {
     renderPage(currentHeader(), currentTodos());
   }
   
- 
-  
-  function parseMonth(month) {
-    var monthNum = new Date(Date.parse(month +" 1, 2012")).getMonth() + 1;
-    if (String(monthNum).length === 1) {
-      monthNum = '0' + monthNum;
-    }
-    return monthNum;
-  }
-  
-  function parseYear(year) {
-    return year.slice(2);
-  }
   
   function getTodoByID(todoID) {
     return todos.filter(function(todo) {
@@ -414,57 +452,6 @@ $(function() {
     setTodos(todos);
   }
  
-  
-  function addButtonEventListeners(type, todoID) {
-    $('form').on('submit', function(e) {
-      e.preventDefault();
-      var input = serializeFormData();
-      if (type === 'new') {
-        createNewTodo(input);
-      } else if (type === 'edit') {
-        editTodo(input, todoID);
-      }
-      toggleModal();
-      renderPage('All Todos', todos);
-    })
-    $('#mark_complete').on('click', function(e) {
-      e.preventDefault();
-      if (type === 'new') {
-        alert("Cannot mark item complete since it hasn't been created yet!")
-      } else {
-        markTodoCompleted(todoID);
-        toggleModal();
-      }
-    })
-  }
-  
-  function serializeFormData() {
-    formDataArray = []
-    formDataArray[0] = $('#title').val();
-    formDataArray[1] = $('#day').val();
-    formDataArray[2] = $('#month').val();
-    formDataArray[3] = $('#year').val();
-    formDataArray[4] = $('#description').val();
-    return formDataArray;
-  }
-  
-  // increments id to always remain unique and stores it in localStorage
-  function assignID() {
-    id = parseInt(id, 10) + 1;
-    localStorage.id = id;
-    return id;
-  }
-  
-  function createNewTodo(input) {
-    var title = input[0];
-    var day = input[1];
-    var month = input[2];
-    var year = input[3];
-    var description = input[4];
-    var id = assignID();
-    todos.push(Object.create(Todo).init(title, day, month, year, description, id));
-    setTodos(todos);
-  }
   
   TodoProgram.init();
   
