@@ -1,5 +1,3 @@
-// NEED TO IMPLEMENT ACTIVE NAV FUNCTIONALITY (Change active todoCollection based on what nav is clicked)
-// use data-title in html to match active collection
 $(function() {
   var id;
   var todos;
@@ -107,7 +105,6 @@ $(function() {
     init: function() {
       this.allTodos = Object.create(TodoCollection).init('All Todos', 'All Todos', todos);
       this.activeCollection = { category: 'All Todos', title: 'All Todos' };
-      // this.allTodos.active = 'active';
       return this;
     },
     assignID: function() {
@@ -180,19 +177,6 @@ $(function() {
     setActiveCollection: function(category, title) {
       $("[data-title=" +"'" + category + " " + title + "'" +"]").addClass('active');
       this.activeCollection = { category: category, title: title };
-      // if (collectionType === 'all') {
-      //   var matchingCollection = this.datedTodos().filter(function(collection) {
-      //     return collection.title.match(title);
-      //   })[0];
-      //   } else {
-      //   var matchingCollection = this.datedCompletedTodos().filter(function(collection) {
-      //     return collection.title.match(title);
-      //   })[0];
-      // }
-      
-      // matchingCollection.active = 'active';
-      // console.log(matchingCollection);
-      // console.log(this.allCollections());
     },
     removeCurrentActiveCollection: function() {
       $('.active').removeClass('active');
@@ -297,6 +281,7 @@ $(function() {
       var input = self.serializeFormData();
       if (type === 'new') {
         todoCollections.createNewTodo(input);
+        todoCollections.setActiveCollection('All Todos', 'All Todos');
       } else if (type === 'edit') {
         todo.editTodo(input);
       }
@@ -324,8 +309,6 @@ $(function() {
       return formDataArray;
     },
     renderNav: function() {
-      console.log(todoCollections.sortByDate(todoCollections.datedTodos()));
-      console.log(todoCollections.allTodos);
       $('[data-title="All Todos All Todos"] + ul').html(listsTemplate({lists: todoCollections.sortByDate(todoCollections.datedTodos())}));
       $('.all_todos .count').text(todoCollections.allTodos.numTodos());
       $('.completed + ul').html(listsTemplate({lists: todoCollections.sortByDate(todoCollections.datedCompletedTodos())}));
@@ -334,7 +317,6 @@ $(function() {
       todoCollections.setActiveCollection(todoCollections.activeCollection.category, todoCollections.activeCollection.title);
       },
     renderMain: function() {
-      // instaed of getActiveCollectino use current collection?
       var activeCollection = todoCollections.getActiveCollection();
       if (activeCollection) {
         var numTodos = activeCollection.numTodos();
@@ -396,95 +378,9 @@ $(function() {
       return JSON.parse(localStorage.getItem('todos'));
     },
   }
-  
-  
-  // initialize todoCollection with all todos
-  // initialize completed TodoCollection
-  // initialize all todos dated collections
-  // intialize completed todos dated collections
-  // add all those collections to TodoCollectionOfCollections
-  // create partials
-  // add initial Event Listeners
-  
-  
-  
-  // have todo which has several components
-  // have todo collection which is group of todos with something in common (either date or all todos/completed todos)
-  // have collections for all todos, then a collection for every unique month/year
-  //   create completed collections based off the above by using array filter
-  
-  // click Add new Todo
-  //   pops up Modal with form empty
-  //   add Button Listeners for submit/mark complete buttons
-  //   remove those listeners once button is pressed or modal clicked out of
-  //   mark complete button should give 'cant do this yet' alert
-  //   submit button creates new Todo
-  //     serialize form and initialize new Todo Object with that info
-  //     if month or year missing make it 'No Due Date' 
-  //   add newly created Todo to AllTodos Collection and date Collection if exists
-  //     if date collectino doesn't exist create one with matching date title
-  //   make allTodos collection active collection and display that collection
-    
-  // click name of already created Todo
-  //   pop up Modal with form populated with todo data
-  //   add Button Listeners for submit/mark complete buttons
-  //   remove listeners once button pressed or modal off
-  //   mark complete makes todo completed value = completed
-  //   submit button edits todo, if date changes then remove from current date collection
-  //     and add to correct one if exists, if not create new date collection
-  //     if old date collection now has 0 elements can delete that collection
-  //   current collection stays active
-  
-  // delete todo
-  //   go into all todo collection and remove, go into date collection and remove
-  //   current collection stays active
-    
-  // clicking around name of created todo
-  //   toggles completeness of todo
-  //   current collection stays active
-    
-  // Nav clicks
-  //   make that collection active, display it in main area
-    
-
-  
-  
-  
-  
-  function currentHeader() {
-    return $('main .title').text();
-  }
-  
-  // gets list of currently displayed todos so they can be redisplayed after action
-  // not requiring showing all todos
-  function currentTodos() {
-    var header = currentHeader().trim();
-    if (header === 'All Todos') {
-      return todos;
-    } else if (header === 'Completed') {
-      return filterCompletedTodos();
-    } else {
-      if ($('all .active')) {
-        return getTodosFromDateList(todoListsByDate, header);
-      } else {
-        return getTodosFromDateList(completedTodoListsByDate, header);
-      }
-    }
-  }
-  
-  
-  function getTodosFromDateList(list, selectedDate) {
-    var chosenList = list.filter(function(listElement) {
-      return listElement.date.trim() === selectedDate.trim();
-    })[0] || {};
-    return chosenList.todos || [];
-  }
-  
  
   
   TodoProgram.init();
-  
-  
 })
 
 
