@@ -1,5 +1,5 @@
 // NEED TO IMPLEMENT ACTIVE NAV FUNCTIONALITY (Change active todoCollection based on what nav is clicked)
-
+// use data-title in html to match active collection
 $(function() {
   var id;
   var todos;
@@ -7,15 +7,16 @@ $(function() {
   var todosTemplate;
     
   var Todo = {
-    init: function(title, dueDay, dueMonth, dueYear, description, id) {
+    init: function(title, dueDay, dueMonth, dueYear, description, id, completed) {
       this.title = title;
       this.dueDay = dueDay;
       this.dueMonth = dueMonth;
       this.dueYear = dueYear;
       this.description = description;
-      this.completed = 'notCompleted';
+      this.completed = completed || 'notCompleted';
       this.id = id;
       this.formattedDueDate = this.formatDueDate();
+      this.__proto__ = Todo;
       return this;
     },
     formatDueDate: function() {
@@ -64,7 +65,7 @@ $(function() {
       this.category = category;
       this.title = title;
       this.todos = todos;
-      this.active = ""
+      // this.active = ""
       return this;
     },
     deleteTodo: function(todo) {
@@ -105,7 +106,8 @@ $(function() {
   var TodoCollections = {
     init: function() {
       this.allTodos = Object.create(TodoCollection).init('All Todos', 'All Todos', todos);
-      this.allTodos.active = 'active';
+      this.activeCollection = { category: 'All Todos', title: 'All Todos' };
+      // this.allTodos.active = 'active';
       return this;
     },
     assignID: function() {
@@ -114,10 +116,10 @@ $(function() {
       return id;
     },
     allCollections: function() {
-      return [this.allTodos].concat([this.completedTodos]).concat(this.datedTodos).concat(this.datedCompletedTodos);
+      return [this.allTodos].concat([this.completedTodos()]).concat(this.datedTodos()).concat(this.datedCompletedTodos());
     },
     completedTodos: function() {
-      return Object.create(TodoCollection).init('Completed Todos', 'Completed Todos', this.allTodos.filterCompletedTodos());
+      return Object.create(TodoCollection).init('Completed', 'Completed', this.allTodos.filterCompletedTodos());
     },
     datedTodos: function() {
       return this.createDatedCollections(this.allTodos);
@@ -169,26 +171,54 @@ $(function() {
       });
     },
     getActiveCollection: function() {
+      var self = this;
       return this.allCollections().filter(function(collection) {
-        return collection.active === 'active';
+        return collection.category === self.activeCollection.category && collection.title === self.activeCollection.title;
       })[0];
       
     },
-    setActiveCollection: function() {
+    setActiveCollection: function(category, title) {
+      $("[data-title=" +"'" + category + " " + title + "'" +"]").addClass('active');
+      this.activeCollection = { category: category, title: title };
+      // if (collectionType === 'all') {
+      //   var matchingCollection = this.datedTodos().filter(function(collection) {
+      //     return collection.title.match(title);
+      //   })[0];
+      //   } else {
+      //   var matchingCollection = this.datedCompletedTodos().filter(function(collection) {
+      //     return collection.title.match(title);
+      //   })[0];
+      // }
       
+      // matchingCollection.active = 'active';
+      // console.log(matchingCollection);
+      // console.log(this.allCollections());
     },
-    
+    removeCurrentActiveCollection: function() {
+      $('.active').removeClass('active');
+    },
   };
   
   var TodoProgram = {
     init: function() {
       id = localStorage.id || 0;
       todos = this.getTodos() || [];
+      // This step recreates Todo Objects since JSON stringify doens't include functions/methods
+      todos = this.parseTodos();
       todoCollections = Object.create(TodoCollections).init();
       this.createPartials();
       this.initialEventListeners();
       this.renderNav();
       this.renderMain();
+    },
+    parseTodos: function() {
+      if (todos.length > 0) {
+        return todos.map(function(todo) {
+          return Object.create(Todo).init(todo.title, todo.dueDay, todo.dueMonth, todo.dueYear, todo.description, todo.id, todo.completed);
+        });
+      } else {
+        return todos;
+      }
     },
     createPartials: function() {
       listsTemplate = Handlebars.compile($('#all_todos_lists').html());
@@ -224,35 +254,36 @@ $(function() {
       // Event Listener for clicking on Nav list item
       $('nav ul').on('click', 'li', function(e) {
         e.preventDefault();
-        $('nav .active').removeClass('active');
-        $(e.target).addClass('active');
-        var date = $(e.target).text().split(' ')[0];
+        var title = $(e.target).text().split(' ')[0];
         if ($(e.target).text().match('No Due Date')) {
-          date = "No Due Date";
+          title = "No Due Date";
           $('h1').css('width', '150px');
         } else {
            $('h1').css('width', '125px');
         }
-        
-        if ($(e.target).closest('ul').attr('class') === 'all') {
-          var datedTodos = getTodosFromDateList(todoListsByDate, date);
+        if ($(e.target).closest('ul').hasClass('all')) {
+          var category = 'All Todos';
         } else {
-          var datedTodos = getTodosFromDateList(completedTodoListsByDate, date);
+          var category = 'Completed';
         }
-        
-        renderMain(date, datedTodos);
+        todoCollections.removeCurrentActiveCollection();
+        todoCollections.setActiveCollection(category, title);
+        self.renderMain();
       })
       
       // Event Listener for clicking on Nav Header
       $('nav h2').on('click', function(e) {
         e.preventDefault();
-        $('nav .active').removeClass('active');
-        $(e.target).addClass('active');
         if ($(e.target).text().match('All Todos')) {
-          renderMain('All Todos', todos);
+          var category = "All Todos"
+          var title = "All Todos"
         } else if ($(e.target).text().match('Completed')) {
-          renderMain('Completed ', completedTodos)
+          var category = "Completed"
+          var title = "Completed"
         }
+        todoCollections.removeCurrentActiveCollection();
+        todoCollections.setActiveCollection(category, title);
+        self.renderMain();
       })
       
       $(window).on('unload', function(e) {
@@ -293,16 +324,29 @@ $(function() {
       return formDataArray;
     },
     renderNav: function() {
-      $('.all_todos + ul').html(listsTemplate({lists: todoCollections.sortByDate(todoCollections.datedTodos())}));
+      console.log(todoCollections.sortByDate(todoCollections.datedTodos()));
+      console.log(todoCollections.allTodos);
+      $('[data-title="All Todos All Todos"] + ul').html(listsTemplate({lists: todoCollections.sortByDate(todoCollections.datedTodos())}));
       $('.all_todos .count').text(todoCollections.allTodos.numTodos());
       $('.completed + ul').html(listsTemplate({lists: todoCollections.sortByDate(todoCollections.datedCompletedTodos())}));
       $('h2.completed .count').text(todoCollections.completedTodos().numTodos());
       $('ul.completed li').addClass('completed');
+      todoCollections.setActiveCollection(todoCollections.activeCollection.category, todoCollections.activeCollection.title);
       },
     renderMain: function() {
-      $('main h1 .title').text(todoCollections.getActiveCollection().title);
-      $('main h1 .count').text(todoCollections.getActiveCollection().numTodos());
-      $('main ul').html(todosTemplate({todos: todoCollections.getActiveCollection().sortByComplete()}));
+      // instaed of getActiveCollectino use current collection?
+      var activeCollection = todoCollections.getActiveCollection();
+      if (activeCollection) {
+        var numTodos = activeCollection.numTodos();
+        var todos = activeCollection.sortByComplete();
+      } else {
+        var numTodos = 0;
+        var todos = [];
+      }
+      var title = todoCollections.activeCollection.title;
+      $('main h1 .title').text(title);
+      $('main h1 .count').text(numTodos);
+      $('main ul').html(todosTemplate({todos: todos}));
     },
     displayModal: function(todo) {
       if (todo) {

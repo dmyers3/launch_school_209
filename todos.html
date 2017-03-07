@@ -11,10 +11,10 @@
   <body>
     <input id="menu_toggle" type="checkbox">
     <nav>
-      <h2 class="all_todos active">All Todos<span class="count"></span></h2>
+      <h2 class="all_todos active" data-title="All Todos All Todos">All Todos<span class="count"></span></h2>
       <ul class="all">
       </ul>
-      <h2 class="completed">Completed<span class="count">8</span></h2>
+      <h2 class="completed" data-title="Completed Completed">Completed<span class="count">8</span></h2>
       <ul class="completed">
       </ul>
     </nav>
@@ -122,7 +122,7 @@
     </main>
     <script id='all_todos_lists' type='text/x-handlebars'>
       {{#each lists}}
-        <li class="{{active}}">{{title}} <span class="count">{{numTodos}}</span></li>
+        <li class="" data-title="{{category}} {{title}}">{{title}} <span class="count">{{numTodos}}</span></li>
       {{/each}}
     </script>
     <script id='todos' type='text/x-handlebars'>
